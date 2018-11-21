@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+	<script type="text/javascript"
+    src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css" >
+	
+	<title>My Page</title>
+		<script>
+		
+		</script>
+	</head>
+	<body>
+	<h1 class="heading">Ivan Delev</h1>
+	<img id="profileid" src="https://scontent-lht6-1.xx.fbcdn.net/v/t1.0-9/33498900_2201608669865993_4900392427279351808_n.jpg?_nc_cat=111&oh=1b84352e5296e506ab429e0ec2dd686c&oe=5C5BC53D" 
+	class="photo">
+	<div id="full-bio" >
+		<h2 class="sechead">Summary:</h2>
+			<p class="text">Hi, there! My name is Ivan and im a 3rd year University of Glasgow Student.
+				My degree is Bsc Computing Science and Business and Managment. My hobbies are Netflix and worying.
+			</p>
+		<form>
+			<div>
+				<input type="file" name="imgShow" id="imgShow" onchange="showimagepreview(this)" accept=".gif,.jpg,.jpeg,.png" />
+			</div>
+			<img id="imgDisplayarea"/>
+		</form>
+		<h2 class="sechead">Education History:</h2>
+		<ul class="list">
+			<li>University: <a href="https://www.gla.ac.uk/"> University of Glasgow<img src="https://www.gla.ac.uk/media/media_535061_en.jpg" class="logo"></a></li>
+		</ul>
+		
+	</div>
+	 <div id="map" style="width: 100%; height: 100%;">
+	 
+	 
+	 </div>
+	 
+	<button class="hide"> Hide headings </button>
+	<button class="color"> Change colours </button>
+		
+	<div id="contact">
+	<footer>
+	Contact Information:</br>
+	e-mail: 2262800d@student.gla.ac.uk</br>
+	<a href="https://www.facebook.com/IvanNiDelev">Facbook</a></br>
+	<a href="https://www.instagram.com/mrivand/?hl=bg">Instagram</a></br>
+	</div>
+	</footer>
+	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+	<script>
+	function loadGPXFileIntoGoogleMap(map, filename) {
+		$.ajax({url: filename,
+			dataType: "xml",
+			success: function(data) {
+				var parser = new GPXParser(data, map);
+				parser.setTrackColour("#ff0000");     // Set the track line colour
+				parser.setTrackWidth(5);          // Set the track line width
+				parser.setMinTrackPointDelta(0.001);      // Set the minimum distance between track points
+				parser.centerAndZoom(data);
+				parser.addTrackpointsToMap();         // Add the trackpoints
+				parser.addRoutepointsToMap();         // Add the routepoints
+				parser.addWaypointsToMap();           // Add the waypoints
+			}
+		});
+	}
+	$(document).ready(function(){
+			$(".hide").click(function(){
+				$(".heading").hide();
+			});
+			$(".color").click(function(){
+				$(".sechead").css("color", "yellow");
+			});
+			$("#profileid").hover(function(){
+				$( this ).fadeOut(100);
+				$( this ).fadeIn(100);
+			});
+			$(".text").click(function(){
+				$(this).text(" Why would you click here?");
+				
+			});
+			var mapOptions = {
+				zoom: 8,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+				};
+			var map = new google.maps.Map(document.getElementById("map"),
+				mapOptions);
+				loadGPXFileIntoGoogleMap(map, "pocotrail.xml");
+			
+		});
+	function showimagepreview(input) 
+		{
+			console.log("File oppened.");
+			if (input.files && input.files[0]) 
+				{
+					var filerdr = new FileReader();
+					filerdr.onload = function(e) {
+						$('#imgDisplayarea').attr('src', e.target.result);
+					};
+				filerdr.readAsDataURL(input.files[0]);
+				}
+		}
+
+
+	</script>
+	</body>
+</html>
+	
