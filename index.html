@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>My Google Map</title>
+
+<!--CSS stying here -->
+  <style>
+    #map{
+      height: 400px;
+      width: 100%;
+    }
+
+  </style>
+
+</head>
+<body>
+  <h1> My Map!</h1>
+
+  <div id="map"></div>
+
+  <!-- Java Script  Starts from here -->
+  <script>
+        function initMap(){
+
+          //Defense location = 31.4715, 74.4584
+          //lahore locaion = 31.5204, 74.3587
+          var defense = {lat:31.4715, lng:74.4584};
+          var lahore = {lat:31.5204, lng:74.3587};
+
+          //Options For Map
+          var options = {
+            zoom: 10,
+            center: lahore
+          };
+
+          //Map returend for the specific position
+          var map = new google.maps.Map(document.getElementById('map'), options);
+/*
+          //We can add a listener which will put a marker on the place whereever we click
+          google.maps.event.addListener(map, 'click',
+          function(event){
+                addingMarker({loc:event.latLng});
+          });
+*/
+
+/*
+          //Adding a marker
+          var markerDefense = new google.maps.Marker({position: defense, map: map});
+
+          //Adding another marker at Lahore
+          var marker = new google.maps.Marker({
+            position: lahore,
+            map : map,
+            icon : 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
+            title: 'Lahore'
+          });
+
+          //Takes the last 'marker' which is being used; therefore, we get a popup when we click on defense
+          var informationWindow = new google.maps.InfoWindow({
+            content: '<h1> Lahore,Second Largest City of Pakistan, 54000</h1>'
+          });
+
+          var informationWindowD = new google.maps.InfoWindow({
+            content: '<h1> Defense biggest housing authority</h1>'
+          });
+
+          marker.addListener('click', function(){
+            informationWindow.open(map, marker);
+          });
+          //A seperate listener for a seperate marker
+          markerDefense.addListener('click', function(){
+            informationWindowD.open(map, markerDefense);
+          });
+*/
+
+        //Alternative apporach to the previous method, this is efficient than the earlier one
+          function addingMarker(props){
+
+            var marker = new google.maps.Marker({
+              position: props.loc,
+              map : map,
+              //icon : props.imageMark,
+              title: props.title
+
+            });
+
+            //Because of this we don't have to mention the image mark in the addingMarker(props) method
+            if(props.imageMark != null){
+                marker.setIcon(props.imageMark);
+            }
+
+            //Similar Reason as before
+            if(props.content != null){
+
+              var informationWindow = new google.maps.InfoWindow({
+                content:props.content
+              });
+
+              marker.addListener('click', function(){
+                informationWindow.open(map, marker);
+              });
+            }
+
+
+          }
+
+/*
+          //Calling the constructed methods for differente locations but two problems as we are getting the same flag and same message 'title'
+          addingMarker({
+            loc:lahore,
+            imageMark: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACsUlEQVRYR+2X20tUQRzHv7N7Lu6uqx61NdY1USNMMizBajMDCyEyKsiULFDpof6AInoLeogeegh6CEKNtQuZEEUFEkFrD1F0QSMEwXB3DTX2lrq3c4uzIamdg5c9BtHO48xvfvOZ7/x+85sh0GgtHR12ihcHYDSUatksq1+URikj2d3d3T2hZk+0nLS2tzcTGffnxn1eD2y2AjAsi4Dfj3AotGBqDseBy81VdyeTYz23O/tWBHCqra1FBrk3N2nc50O+zQaWYRAMBBAKLwLI4cBxnCqATNB0p6vrYUoAy5JbwyglgMShC6msDebJFaQB0gr8Hwrw30YgxWNgSyohSyKIwZjMnjXPAn5iFLGhAQjfPZCiM6DyHKCLN8O8bf/fAZDjEfhvnYdxXRHogmJEB93IrG+FqWIXQAxro0D000uYKusAI4VQ3zUo8uc0nQO9vhShB1chhKdg3dMEtnyHfgBiaBJSPAKIIsKPriOr8QyovEIQmoW/6yKofAdoexkiH/ph2XkY5uoGfY8g8XUQ4Wc3AUn6fTVTDDKdRxD78hpyIg5p9gcyymsApb/uuM4AY58RfnwDVJ4d5u0NiA2/QcI7DGv9CbCbakAoGtPuXlj3Ni+oHbpkQeTjC0TePYcScFkHToPdWA0xOIFAzyUQ1gzTllpYnEdVi5YuAMrCyo5n3L1gyqqSARYdeoXI+35kVDhhqTkIg1X9MaILgLI1wT+O4N3Lf+wyu/EsmJKtmiVbNwAlCMXgJGSRx+zbpzBV7QOVbUtmxlzEq1HoBjDf+XR/J6z1J5PRvlRbE4ClFp0/ngZIK/DvK7CSiNeyTelNqOXU6xmDwAvJYZqh4SjaoMm6KoDFn9PF3n1eL3iB/1VyaRqFjiJtsVbzOU1+zyXZDaAspWOQMEJkodblck2p+fkJew/hMA8bKgQAAAAASUVORK5CYII=',
+            title:'Lahore',
+            content: '<h1>Lahore, the second most populous and developed city of Pakistan, 54000</h1>'
+          });
+
+          //addingMarker({loc:defense});
+
+          //Islamabad's Location
+          addingMarker({
+            loc:{lat:33.6844, lng:73.0479},
+            imageMark:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADBklEQVRYR+2XX0hTURzHv+fcO+/UOZfToaAb0j8JorfqwcIeLEroDxUVuHLVcz1EPvgYJERCb0EgLYdWYFH2ByM0DDUqROzJcqzIbWZK29L5Z7vbOXEXirMNNnf1IbyP53zP7/e539/53XMPQZLHarWaOBH7QLE5mSaVcQaMMoLKh3a7O5GeJAty1mY7wjieLsx7PW4UFhZB0mrh9/sR8PniluYbDCgwGhOH46S2teVuW1oAtXV1RwHyZGHRmNcDowIgSQj4/fAH/PEA+fkoKEgMwAmsbXZ7a0YAqdidTJMRQLimPgRKpRwygzAkRLiYFkvWsxshTvnFFTugAFTmdkun8poxzfRo8jXCx4pShlAFoN7YIFk0rljS9uB59MweXFuAfbpX0nHdPcwwHZoC1zEZKVlbAGUP6GkA8zwbYS6lnFwRqlICBSCtrEvE6wCr4gAlwO4NDBU6BkKAL9MU7/0UEf5voVYF4FhJFNvyWFw2Z5CifUzAcgbVAYoljguWSMI96XCLcM/9Pd+C/BeGIi9Q1fkjRCgy+xIu7YLteobDxdGEAJ0/KQZ/C5Axj+7wbUzxCZx+bQgJREWA0myOc2WJHXjgEeCaBXplO8aZMwapKsAE+woK4JLZjPKc+Gp75ggcHhGD8nM4o/2LDqkG4Ip+wGCkAxQiqiUbTprMsS5QnpEZAW8mCYbljxiILP5CqONA6NCV0BDvlJzRd4tvJSALezU2FNHyxTHFnbdyMzjiuyNjB7oOGNk4dynOY1fuRthMldgkmUCJgCySDQql9RhCbAau0ARaJvvRFxxRrwT39wfBEEGNYQcay06kdCRc83bgsW9AnRIoAFpK0VVxFbmCNiWAeS6jevgmpqJzmXeBArBTZ8Gd8rqUki+ILn9vQ8/UZ3UAqvRbcMtyJi2ABvcjvAx8Wgf4DxxIq/BJxBldTJIBeNyjkMNybFrUiCgzW5Kyrghg+eV0eXSv14NwOBwb1ogiSsvMyc1ayeXUZrMVydFoL6iwNZMyMPBvImN7HA6HN1GcP8KqFD/DwrDsAAAAAElFTkSuQmCC',
+            title:'Islamabad',
+            content: 'Islamabad is the capital city of Pakistan'
+          });
+
+          addingMarker({
+            loc:{lat:55.8642, lng:-4.2518},
+            imageMark:'http://www.auspak.edu.pk/wp-content/uploads/2017/11/UK_Flag-50x50.png',
+            title:'Glasgow',
+            content:'Glasgow has one of the finest university called "University of Glasgow"'
+          });
+*/
+        /*  //We are dragging the defense marker
+          var marker = new google.maps.Marker({
+              position: defense,
+              map: map,
+              draggable:true,
+              title:"Drag me!"
+          });
+        */
+
+
+        //Another apporach of where we use for-loop
+        var markersArray = [
+          {
+            loc:lahore,
+            imageMark: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACsUlEQVRYR+2X20tUQRzHv7N7Lu6uqx61NdY1USNMMizBajMDCyEyKsiULFDpof6AInoLeogeegh6CEKNtQuZEEUFEkFrD1F0QSMEwXB3DTX2lrq3c4uzIamdg5c9BtHO48xvfvOZ7/x+85sh0GgtHR12ihcHYDSUatksq1+URikj2d3d3T2hZk+0nLS2tzcTGffnxn1eD2y2AjAsi4Dfj3AotGBqDseBy81VdyeTYz23O/tWBHCqra1FBrk3N2nc50O+zQaWYRAMBBAKLwLI4cBxnCqATNB0p6vrYUoAy5JbwyglgMShC6msDebJFaQB0gr8Hwrw30YgxWNgSyohSyKIwZjMnjXPAn5iFLGhAQjfPZCiM6DyHKCLN8O8bf/fAZDjEfhvnYdxXRHogmJEB93IrG+FqWIXQAxro0D000uYKusAI4VQ3zUo8uc0nQO9vhShB1chhKdg3dMEtnyHfgBiaBJSPAKIIsKPriOr8QyovEIQmoW/6yKofAdoexkiH/ph2XkY5uoGfY8g8XUQ4Wc3AUn6fTVTDDKdRxD78hpyIg5p9gcyymsApb/uuM4AY58RfnwDVJ4d5u0NiA2/QcI7DGv9CbCbakAoGtPuXlj3Ni+oHbpkQeTjC0TePYcScFkHToPdWA0xOIFAzyUQ1gzTllpYnEdVi5YuAMrCyo5n3L1gyqqSARYdeoXI+35kVDhhqTkIg1X9MaILgLI1wT+O4N3Lf+wyu/EsmJKtmiVbNwAlCMXgJGSRx+zbpzBV7QOVbUtmxlzEq1HoBjDf+XR/J6z1J5PRvlRbE4ClFp0/ngZIK/DvK7CSiNeyTelNqOXU6xmDwAvJYZqh4SjaoMm6KoDFn9PF3n1eL3iB/1VyaRqFjiJtsVbzOU1+zyXZDaAspWOQMEJkodblck2p+fkJew/hMA8bKgQAAAAASUVORK5CYII=',
+            title:'Lahore',
+            content: '<h1>Lahore, the second most populous and developed city of Pakistan, 54000</h1>'
+          },
+          {
+            loc:{lat:33.6844, lng:73.0479},
+            imageMark:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADBklEQVRYR+2XX0hTURzHv+fcO+/UOZfToaAb0j8JorfqwcIeLEroDxUVuHLVcz1EPvgYJERCb0EgLYdWYFH2ByM0DDUqROzJcqzIbWZK29L5Z7vbOXEXirMNNnf1IbyP53zP7/e539/53XMPQZLHarWaOBH7QLE5mSaVcQaMMoLKh3a7O5GeJAty1mY7wjieLsx7PW4UFhZB0mrh9/sR8PniluYbDCgwGhOH46S2teVuW1oAtXV1RwHyZGHRmNcDowIgSQj4/fAH/PEA+fkoKEgMwAmsbXZ7a0YAqdidTJMRQLimPgRKpRwygzAkRLiYFkvWsxshTvnFFTugAFTmdkun8poxzfRo8jXCx4pShlAFoN7YIFk0rljS9uB59MweXFuAfbpX0nHdPcwwHZoC1zEZKVlbAGUP6GkA8zwbYS6lnFwRqlICBSCtrEvE6wCr4gAlwO4NDBU6BkKAL9MU7/0UEf5voVYF4FhJFNvyWFw2Z5CifUzAcgbVAYoljguWSMI96XCLcM/9Pd+C/BeGIi9Q1fkjRCgy+xIu7YLteobDxdGEAJ0/KQZ/C5Axj+7wbUzxCZx+bQgJREWA0myOc2WJHXjgEeCaBXplO8aZMwapKsAE+woK4JLZjPKc+Gp75ggcHhGD8nM4o/2LDqkG4Ip+wGCkAxQiqiUbTprMsS5QnpEZAW8mCYbljxiILP5CqONA6NCV0BDvlJzRd4tvJSALezU2FNHyxTHFnbdyMzjiuyNjB7oOGNk4dynOY1fuRthMldgkmUCJgCySDQql9RhCbAau0ARaJvvRFxxRrwT39wfBEEGNYQcay06kdCRc83bgsW9AnRIoAFpK0VVxFbmCNiWAeS6jevgmpqJzmXeBArBTZ8Gd8rqUki+ILn9vQ8/UZ3UAqvRbcMtyJi2ABvcjvAx8Wgf4DxxIq/BJxBldTJIBeNyjkMNybFrUiCgzW5Kyrghg+eV0eXSv14NwOBwb1ogiSsvMyc1ayeXUZrMVydFoL6iwNZMyMPBvImN7HA6HN1GcP8KqFD/DwrDsAAAAAElFTkSuQmCC',
+            title:'Islamabad',
+            content: 'Islamabad is the capital city of Pakistan'
+          },
+          {
+            loc:{lat:55.8642, lng:-4.2518},
+            imageMark:'http://www.auspak.edu.pk/wp-content/uploads/2017/11/UK_Flag-50x50.png',
+            title:'Glasgow',
+            content:'Glasgow has one of the finest university called "University of Glasgow"'
+          }
+
+        ];
+
+        for (var i = 0; i < markersArray.length; i++) {
+          addingMarker(markersArray[i]);
+        }
+
+        }
+
+
+  </script>
+
+  <!--Using the google map API here -->
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwZqt4BMAykx7a4j2r0u9YTseGjltADBQ&callback=initMap">
+  </script>
+
+</body>
+</html>
