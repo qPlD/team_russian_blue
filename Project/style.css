@@ -1,3 +1,30 @@
+.upload-btn-wrapper {
+  position:absolute;
+  top: 9px;
+  left:60px;
+  border-radius:10px;
+  background-color: rgba(255, 153, 0, 0.7);
+  z-index:2000;
+}
+
+.btn {
+  border: 2px solid gray;
+  color: gray;
+  background-color: white;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.upload-btn-wrapper input[type=file] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
+
 html, body, #mapid{
   height: 100%;
   width:100%;
