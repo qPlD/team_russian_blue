@@ -105,6 +105,12 @@
 						let distance = document.createElement('td');
 						distance.innerHTML = Math.round((track.distance.total / 1000)*100)/100;
 
+						let speed = document.createElement('td');
+						//////////////////
+						//speed.innerHTML = Math.round(track.distance.total / track.time);
+						//speed.innerHTML = Math.round(track.time);
+
+
 						let avg = document.createElement('td');
 						avg.innerHTML = Math.floor(track.elevation.avg);
 
@@ -122,6 +128,7 @@
 
 						tr.appendChild(name);
 						tr.appendChild(distance);
+						tr.appendChild(speed);
 						tr.appendChild(avg);
 						tr.appendChild(max);
 						tr.appendChild(min);
@@ -266,6 +273,7 @@
 					<tr>
 						<th>Name</th>
 						<th>Distance (km)</th>
+						<th>Average speed (km/h)</th>
 						<th>Average elevation (m)</th>
 						<th>Max elevation (m)</th>
 						<th>Min elevation (m)</th>
