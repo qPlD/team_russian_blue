@@ -221,6 +221,30 @@
 				return result;
 			}
 		</script>
+		<script>
+			<!-- Start and end icons -->
+			var startIcon = L.icon({
+				iconUrl: './images/pin-icon-start.png',
+				shadowUrl: './images/pin-shadow.png',
+
+				iconSize:     [33, 50], // size of the icon
+				shadowSize:   [50, 50], // size of the shadow
+				iconAnchor:   [17, 50], // point of the icon which will correspond to marker's location
+				shadowAnchor: [18, 50],  // the same for the shadow
+				popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+			});
+			
+			var endIcon = L.icon({
+				iconUrl: './images/pin-icon-end.png',
+				shadowUrl: './images/pin-shadow.png',
+
+				iconSize:     [33, 50], // size of the icon
+				shadowSize:   [50, 50], // size of the shadow
+				iconAnchor:   [17, 50], // point of the icon which will correspond to marker's location
+				shadowAnchor: [18, 50],  // the same for the shadow
+				popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+			});
+		</script>
 	</head>
 	<!-- Start of body -->
 	<body>
@@ -241,10 +265,10 @@
 				<thead>
 					<tr>
 						<th>Name</th>
-						<th>Distance</th>
-						<th>Average elevation</th>
-						<th>Max elevation</th>
-						<th>Min elevation</th>
+						<th>Distance (km)</th>
+						<th>Average elevation (m)</th>
+						<th>Max elevation (m)</th>
+						<th>Min elevation (m)</th>
 						<th>Positive elevation difference</th>
 						<th>Negative elevation difference</th>
 
@@ -292,8 +316,8 @@
 					  }).addTo(map);
 					
 					<!-- Sets start and end points -->
-					L.marker(points[0]).addTo(map);
-					L.marker(points[points.length - 1]).addTo(map);
+					L.marker(points[0], {icon: startIcon}).addTo(map);
+					L.marker(points[points.length - 1], {icon: endIcon}).addTo(map);
 					
 					// Format of coords [longitude, latitude, elevation]
 					var coords = convert_to_coordinates(result.segments[0]);
