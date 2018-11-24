@@ -17,154 +17,209 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
 		<script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>		
 		<script type="text/javascript" src="./elevation/leaflet.elevation-0.0.4.min.js"></script>
+		<script src="./stats/gpx-parser.js"></script>
 		
 		<script>
-		// Start DOM Parser
-		if(typeof(DOMParser) == 'undefined') {
-			DOMParser = function() {}
-			DOMParser.prototype.parseFromString = function(str, contentType) {
-				if(typeof(ActiveXObject) != 'undefined') 
-				{
-					var xmldata = new ActiveXObject('MSXML.DomDocument');
-					xmldata.async = false;
-					xmldata.loadXML(str);
-					return xmldata;
-				} else if(typeof(XMLHttpRequest) != 'undefined') 
-				{
-					var xmldata = new XMLHttpRequest;
-					if(!contentType) {
-					contentType = 'application/xml';
-				}
-					xmldata.open('GET', 'data:' + contentType + ';charset=utf-8,' + encodeURIComponent(str), false);
-					if(xmldata.overrideMimeType) {
-						xmldata.overrideMimeType(contentType);
-					}
-					xmldata.send(null);
-					return xmldata.responseXML;
-				}
-			}
-		}
-		
-		function loadFile(input, onload_func) {
-			var input, file, fr;
-
-			if (typeof window.FileReader !== 'function') {
-				alert("The file API isn't supported on this browser yet.");
-				return;
-			}
-
-			if (!input) {
-				alert("Um, couldn't find the fileinput element.");
-			}
-			else if (!input.files) {
-				alert("This browser doesn't seem to support the `files` property of file inputs.");
-			}
-			else if (!input.files[0]) {
-				balert("Please select a file before clicking 'Load'");
-			}
-			else {
-				file = input.files[0];
-				fr = new FileReader();
-				fr.onload = receivedText;
-				fr.readAsText(file);
-			}
-
-			function receivedText() {
-				onload_func(fr.result);
-			}
-		}
-		
-		function parseXml(xmlstr)
-		{
-			var doc = new DOMParser().parseFromString(xmlstr, "text/xml");
-			return get_gpx_data(doc.documentElement);
-		}
-	
-		function get_gpx_data(node, result) {
-			if(!result)
-				result = { segments: [] };
-				
-			switch(node.nodeName)
-			{
-				case "name":
-					var p = $("<p />");
-					p.text(node.nodeName + " = " + node.textContent);
-					result.name = node.textContent;
-					$("#log").append(p);
-					break;
-					
-				case "trkseg":
-					var segment = [];
-					result.segments.push(segment)
-					for(var i=0; i<node.childNodes.length; i++)
+			// Start DOM Parser
+			if(typeof(DOMParser) == 'undefined') {
+				DOMParser = function() {}
+				DOMParser.prototype.parseFromString = function(str, contentType) {
+					if(typeof(ActiveXObject) != 'undefined') 
 					{
-						var snode = node.childNodes[i];
-						if(snode.nodeName == "trkpt")
-						{
-							var trkpt = { loc: [ parseFloat(snode.attributes["lat"].value), parseFloat(snode.attributes["lon"].value) ] };
-							for(var j=0; j<snode.childNodes.length; j++)
-							{
-								var ssnode = snode.childNodes[j];
-								switch(ssnode.nodeName)
-								{
-									case "time":
-										trkpt.time = new Date(ssnode.childNodes[0].data);
-										break;
-									case "ele":
-										trkpt.ele = parseFloat(ssnode.childNodes[0].data);
-										break;
-								}
-							}
-							segment.push(trkpt)
-						}
+						var xmldata = new ActiveXObject('MSXML.DomDocument');
+						xmldata.async = false;
+						xmldata.loadXML(str);
+						return xmldata;
+					} else if(typeof(XMLHttpRequest) != 'undefined') 
+					{
+						var xmldata = new XMLHttpRequest;
+						if(!contentType) {
+						contentType = 'application/xml';
 					}
-					break;
-			}
-		
-			for(var i=0; i<node.childNodes.length; i++)
-			{
-				get_gpx_data(node.childNodes[i], result);
-			}
-			return result;
-		}
-		
-		function convert_to_latlng(segment)
-		{
-			var result = [];
-			for(var i=0; i<segment.length; i++)
-			{
-				result.push(L.latLng(segment[i].loc[0], segment[i].loc[1]));
-			}
-			return result;
-		}
-		
-		function convert_to_coordinates(segment)
-		{
-			var result = [];
-			for(var i=0; i<segment.length; i++)
-			{
-				result.push([segment[i].loc[1], segment[i].loc[0], segment[i].ele]);
-			}
-			return result;
-		}
-		
-		function get_bounds(gpx_data)
-		{
-			var result = { s: 90.0, n: -90, e: -180.0, w: 180.0 };
-			for(var i=0; i<gpx_data.segments.length; i++)
-			{
-				for(var j=0; j<gpx_data.segments[i].length; j++)
-				{
-					var point = gpx_data.segments[i][j];
-					if(result.s > point.loc[0]) result.s = point.loc[0];
-					if(result.n < point.loc[0]) result.n = point.loc[0];
-					if(result.e < point.loc[1]) result.e = point.loc[1];
-					if(result.w > point.loc[1]) result.w = point.loc[1];
+						xmldata.open('GET', 'data:' + contentType + ';charset=utf-8,' + encodeURIComponent(str), false);
+						if(xmldata.overrideMimeType) {
+							xmldata.overrideMimeType(contentType);
+						}
+						xmldata.send(null);
+						return xmldata.responseXML;
+					}
 				}
-			}	
-			return result;
-		}
+			}
+			
+			function loadFile(input, onload_func) {
+				var input, file, fr;
+
+				if (typeof window.FileReader !== 'function') {
+					alert("The file API isn't supported on this browser yet.");
+					return;
+				}
+
+				if (!input) {
+					alert("Um, couldn't find the fileinput element.");
+				}
+				else if (!input.files) {
+					alert("This browser doesn't seem to support the `files` property of file inputs.");
+				}
+				else if (!input.files[0]) {
+					balert("Please select a file before clicking 'Load'");
+				}
+				else {
+					file = input.files[0];
+					fr = new FileReader();
+					fr.onload = receivedText;
+					fr.readAsText(file);
+				}
+
+				function receivedText() {
+					onload_func(fr.result);
+				}
+			}
+			
+			function parseXml(xmlstr)
+			{
+				var doc = new DOMParser().parseFromString(xmlstr, "text/xml");
+				addStats()
+				return get_gpx_data(doc.documentElement);
+			}
+			
+			function addStats()
+			{
+				if (typeof(gpx) == 'undefined') {
+					gpx = new gpxParser();
+				}
+				document.getElementById("tracks").innerHTML = "";
+				let file = document.getElementById('loadGPXFile-input').files[0];
+				var reader = new FileReader();
+				reader.onload = function(event) {
+					gpx.parse(reader.result)
+					if(gpx.metadata.name != null){
+						document.getElementById('title').innerHTML = gpx.metadata.name;
+					}
+
+					gpx.tracks.forEach(function(track){
+						let tr = document.createElement('tr');
+
+						let name = document.createElement('td');
+						name.innerHTML = track.name;
+
+						let distance = document.createElement('td');
+						distance.innerHTML = Math.round((track.distance.total / 1000)*100)/100;
+
+						let avg = document.createElement('td');
+						avg.innerHTML = Math.floor(track.elevation.avg);
+
+						let max = document.createElement('td');
+						max.innerHTML = Math.floor(track.elevation.max);
+
+						let min = document.createElement('td');
+						min.innerHTML = Math.floor(track.elevation.min);
+
+						let pos = document.createElement('td');
+						pos.innerHTML = Math.floor(track.elevation.pos);
+
+						let neg = document.createElement('td');
+						neg.innerHTML = Math.floor(track.elevation.neg);
+
+						tr.appendChild(name);
+						tr.appendChild(distance);
+						tr.appendChild(avg);
+						tr.appendChild(max);
+						tr.appendChild(min);
+						tr.appendChild(pos);
+						tr.appendChild(neg);
+
+
+						document.getElementById('tracks').appendChild(tr);
+					});
+
+				};
+				reader.readAsText(file);
+			}
 		
+			function get_gpx_data(node, result) {
+				if(!result)
+					result = { segments: [] };
+					
+				switch(node.nodeName)
+				{
+					case "name":
+						var p = $("<p />");
+						p.text(node.nodeName + " = " + node.textContent);
+						result.name = node.textContent;
+						$("#log").append(p);
+						break;
+						
+					case "trkseg":
+						var segment = [];
+						result.segments.push(segment)
+						for(var i=0; i<node.childNodes.length; i++)
+						{
+							var snode = node.childNodes[i];
+							if(snode.nodeName == "trkpt")
+							{
+								var trkpt = { loc: [ parseFloat(snode.attributes["lat"].value), parseFloat(snode.attributes["lon"].value) ] };
+								for(var j=0; j<snode.childNodes.length; j++)
+								{
+									var ssnode = snode.childNodes[j];
+									switch(ssnode.nodeName)
+									{
+										case "time":
+											trkpt.time = new Date(ssnode.childNodes[0].data);
+											break;
+										case "ele":
+											trkpt.ele = parseFloat(ssnode.childNodes[0].data);
+											break;
+									}
+								}
+								segment.push(trkpt)
+							}
+						}
+						break;
+				}
+			
+				for(var i=0; i<node.childNodes.length; i++)
+				{
+					get_gpx_data(node.childNodes[i], result);
+				}
+				return result;
+			}
+			
+			function convert_to_latlng(segment)
+			{
+				var result = [];
+				for(var i=0; i<segment.length; i++)
+				{
+					result.push(L.latLng(segment[i].loc[0], segment[i].loc[1]));
+				}
+				return result;
+			}
+			
+			function convert_to_coordinates(segment)
+			{
+				var result = [];
+				for(var i=0; i<segment.length; i++)
+				{
+					result.push([segment[i].loc[1], segment[i].loc[0], segment[i].ele]);
+				}
+				return result;
+			}
+			
+			function get_bounds(gpx_data)
+			{
+				var result = { s: 90.0, n: -90, e: -180.0, w: 180.0 };
+				for(var i=0; i<gpx_data.segments.length; i++)
+				{
+					for(var j=0; j<gpx_data.segments[i].length; j++)
+					{
+						var point = gpx_data.segments[i][j];
+						if(result.s > point.loc[0]) result.s = point.loc[0];
+						if(result.n < point.loc[0]) result.n = point.loc[0];
+						if(result.e < point.loc[1]) result.e = point.loc[1];
+						if(result.w > point.loc[1]) result.w = point.loc[1];
+					}
+				}	
+				return result;
+			}
 		</script>
 	</head>
 	<!-- Start of body -->
@@ -178,6 +233,27 @@
 				<button class="btn">Upload a GPX file</button>
 				<input type="file" id="loadGPXFile-input" />
 			</form>
+		</div>
+		
+		<!-- Stats table -->
+		<div class="stats-table">
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Distance</th>
+						<th>Average elevation</th>
+						<th>Max elevation</th>
+						<th>Min elevation</th>
+						<th>Positive elevation difference</th>
+						<th>Negative elevation difference</th>
+
+					</tr>
+				</thead>
+				<tbody id="tracks">
+
+				</tbody>
+			</table>
 		</div>
 
 		<!-- Initialise the map -->

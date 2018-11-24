@@ -30,3 +30,23 @@ html, body, #mapid{
   width:100%;
   margin:0;
 }
+
+.stats-table {
+  position:absolute;
+  bottom: 40px;
+  right: 20px;
+  width: 530px;
+  border: 2px solid gray;
+  color: gray;
+  border-radius: 8px;
+  background-color: white;
+  font-size: 16px;
+}
+table, td, th {
+  border: 1px solid black;
+  border-collapse: collapse;
+  text-align: center;
+}
+td, th {
+  padding: .2rem;
+}
