@@ -55,7 +55,7 @@ gpxParser.prototype.parse = function (string) {
 
         track.name   = keepThis.getElementValue(trk, "name");
         track.cmt    = keepThis.getElementValue(trk, "cmt");
-	//track.time   = keepThis.getElementValue(trk, "time");		
+	track.time   = keepThis.getElementValue(trk, "time");		
         track.desc   = keepThis.getElementValue(trk, "desc");
         track.src    = keepThis.getElementValue(trk, "src");
         track.number = keepThis.getElementValue(trk, "number");
@@ -73,7 +73,8 @@ gpxParser.prototype.parse = function (string) {
             trackpoints.push(pt);
         }
         track.distance = keepThis.calculDistance(trackpoints);
-	//track.time = keepThis.calculTime(trackpoints);////////////////////
+	///////////////////////////
+	//track.time = keepThis.calculTime(trackpoints);
         track.elevation = keepThis.calcElevation(trackpoints);
         track.points = trackpoints;
         keepThis.tracks.push(track);
@@ -110,9 +111,9 @@ gpxParser.prototype.calculTime = function(points) {
     timems = 0;
     var startDate = new Date(points[0].getElementByTagName("time")[0].textContent);
     var endDate = new Date(points[points.length-1].getElementByTagName("time")[points.length-1].textContent);
-    
-    
 
+    time.total = 0;
+    
     return timems;
 }
 
