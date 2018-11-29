@@ -11,18 +11,18 @@
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
 		<script>
-		
+
 		// Start DOM Parser
 		if(typeof(DOMParser) == 'undefined') {
 			DOMParser = function() {}
 			DOMParser.prototype.parseFromString = function(str, contentType) {
-				if(typeof(ActiveXObject) != 'undefined') 
+				if(typeof(ActiveXObject) != 'undefined')
 				{
 					var xmldata = new ActiveXObject('MSXML.DomDocument');
 					xmldata.async = false;
 					xmldata.loadXML(str);
 					return xmldata;
-				} else if(typeof(XMLHttpRequest) != 'undefined') 
+				} else if(typeof(XMLHttpRequest) != 'undefined')
 				{
 					var xmldata = new XMLHttpRequest;
 					if(!contentType) {
@@ -37,7 +37,7 @@
 				}
 			}
 		}
-		
+
 		function loadFile(input, onload_func) {
 			var input, file, fr;
 
@@ -66,17 +66,17 @@
 				onload_func(fr.result);
 			}
 		}
-		
+
 		function parseXml(xmlstr)
 		{
 			var doc = new DOMParser().parseFromString(xmlstr, "text/xml");
 			return get_gpx_data(doc.documentElement);
 		}
-	
+
 		function get_gpx_data(node, result) {
 			if(!result)
 				result = { segments: [] };
-				
+
 			switch(node.nodeName)
 			{
 				case "name":
@@ -85,7 +85,7 @@
 					result.name = node.textContent;
 					$("#log").append(p);
 					break;
-					
+
 				case "trkseg":
 					var segment = [];
 					result.segments.push(segment)
@@ -113,14 +113,14 @@
 					}
 					break;
 			}
-		
+
 			for(var i=0; i<node.childNodes.length; i++)
 			{
 				get_gpx_data(node.childNodes[i], result);
 			}
 			return result;
 		}
-		
+
 		function convert_to_latlng(segment)
 		{
 			var result = [];
@@ -130,7 +130,7 @@
 			}
 			return result;
 		}
-		
+
 		function get_bounds(gpx_data)
 		{
 			var result = { s: 90.0, n: -90, e: -180.0, w: 180.0 };
@@ -144,10 +144,10 @@
 					if(result.e < point.loc[1]) result.e = point.loc[1];
 					if(result.w > point.loc[1]) result.w = point.loc[1];
 				}
-			}	
+			}
 			return result;
 		}
-		
+
 		</script>
 	</head>
 	<body>
@@ -159,28 +159,28 @@
 		</div>
 		<div id="map_canvas"></div>
 		<script>
-			$("#fileinput").change(function() { 
+			$("#fileinput").change(function() {
 				loadFile($("#fileinput")[0], function(xml) {
 					result = parseXml(xml);
-					
+
 					var bounds = get_bounds(result);
 					var points = convert_to_latlng(result.segments[0]);
-					
+
 					var myLatlng = new google.maps.LatLng(-34.397, 150.644);
 					var myOptions = {
 					  zoom: 8,
 					  center: myLatlng,
 					  mapTypeId: google.maps.MapTypeId.ROADMAP
 					}
-					
+
 					var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-					
+
 					var southWest = new google.maps.LatLng(bounds.s,bounds.w);
 					var northEast = new google.maps.LatLng(bounds.n,bounds.e);
 					var bounds = new google.maps.LatLngBounds(southWest,northEast);
 					map.fitBounds(bounds);
 
-					
+
 					var flightPath = new google.maps.Polyline({
 						path: points,
 						strokeColor: "#FF0000",
@@ -189,7 +189,7 @@
 					  });
 
 					  flightPath.setMap(map);
-					  
+
 					for(var j=0; j<points.length; j++)
 					{
 						if (j==0){
@@ -205,8 +205,8 @@
 									size: new google.maps.Size(40, 40),
 									// The origin for this image is (0, 0).
 									origin: new google.maps.Point(0, 0),
-									
-								 
+
+
 								};
 								var marker = new google.maps.Marker({
 									position: points[j],
@@ -214,7 +214,7 @@
 									icon: image
 							}	);
 						}
-						
+
 						marker.setMap(map);
 					}
 
