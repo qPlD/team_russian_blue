@@ -70,11 +70,12 @@ gpxParser.prototype.parse = function (string) {
             pt.lat = parseFloat(trkpt.getAttribute("lat"));
             pt.lon = parseFloat(trkpt.getAttribute("lon"));
             pt.ele = parseFloat(keepThis.getElementValue(trkpt, "ele"));
+	    pt.ele = parseFloat(keepThis.getElementValue(trkpt, "time"));
             trackpoints.push(pt);
         }
         track.distance = keepThis.calculDistance(trackpoints);
 	///////////////////////////
-	//track.time = keepThis.calculTime(trackpoints);
+	track.time = keepThis.calculTime(trackpoints);
         track.elevation = keepThis.calcElevation(trackpoints);
         track.points = trackpoints;
         keepThis.tracks.push(track);
@@ -107,14 +108,18 @@ gpxParser.prototype.calculDistance = function(points) {
 }
 
 gpxParser.prototype.calculTime = function(points) {
-
+    let time = {};
     timems = 0;
-    var startDate = new Date(points[0].getElementByTagName("time")[0].textContent);
-    var endDate = new Date(points[points.length-1].getElementByTagName("time")[points.length-1].textContent);
-
-    time.total = 0;
+    //GET TIME function not fully working so relies on random function for now.
+    //var startDate = new Date(points[0].getElementByTagName("time")[0].textContent);
+    //var endDate = new Date(points[points.length-1].getElementByTagName("time")[points.length-1].textContent);
+    //test = startDate - endDate;
+    time.total = Math.random() * (20-4) + 4 ;
+    //time.total = (points[points.length-1].time - point[0].time);
+    //timediff = this.calcTimeDiff(points[0],points[points.length-1]);
     
-    return timems;
+    
+    return time;
 }
 
 gpxParser.prototype.calcDistanceBetween = function (wpt1, wpt2) {
@@ -133,6 +138,10 @@ gpxParser.prototype.calcDistanceBetween = function (wpt1, wpt2) {
 		    c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 	return 6371000 * c;
 }
+
+//gpxParser.prototype.calcTimeDiff = function (wpt1, wpt2) {
+    
+//}
 
 
 gpxParser.prototype.calcElevation = function (points) {
